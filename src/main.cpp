@@ -12,8 +12,8 @@
 #define BUTTON_PIN D1
 #define RELAY_PIN D2
 #define RED_PIN D3
-#define GREEN_PIN D4
-#define BLUE_PIN D5
+#define GREEN_PIN D5
+#define BLUE_PIN D6
 
 NetworkIdentify networkIdentify("TestEsp", "ControlsDevice", 54545);
 WiFiConnector connector("ssid", "password");
@@ -23,8 +23,8 @@ ForceKey relay(RELAY_PIN, 0, 1024, 10);
 ESP8266WebServer server(80);
 int buttonState;
 
-ForceKeyServerControl relayControl("Light", "/relay", &relay, &server);
 LedRgbControl ledRgbControl("LedRgb", "/led_rgb", RED_PIN, GREEN_PIN, BLUE_PIN, 0, 1024, 10, &server);
+ForceKeyServerControl relayControl("Light", "/relay", &relay, &server, &ledRgbControl);
 
 
 void serverHandleRoot()
@@ -80,16 +80,18 @@ void serverStart()
 void setup()
 {
   Serial.begin(115200);
+
+  relay.setup();
+  ledRgbControl.setup();
+  relayControl.setup();
+
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
   pinMode(BUTTON_PIN, INPUT_PULLUP);
   buttonState = digitalRead(BUTTON_PIN);
-  
+
   connector.connect();
   serverStart();
-  relay.setup();
-  relayControl.setup();
-  ledRgbControl.setup();
   networkIdentify.setup();
 }
 
@@ -110,6 +112,7 @@ void loop()
     {
       buttonState = newButtonState;
       relay.toggle();
+      ledRgbControl.setEnabled(!relay.isLow());
     }
   }
 }

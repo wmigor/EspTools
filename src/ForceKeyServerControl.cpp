@@ -1,9 +1,10 @@
 #include <ForceKeyServerControl.h>
 
-ForceKeyServerControl::ForceKeyServerControl(const String & name, const String &url, ForceKey *forceKey, ESP8266WebServer *server):
+ForceKeyServerControl::ForceKeyServerControl(const String & name, const String &url, ForceKey *forceKey, ESP8266WebServer *server, LedRgbControl *ledRgb):
     WiFiControl(name, url, "ForceKey", server)
 {
     this->forceKey = forceKey;
+    this->ledRgb = ledRgb;
 }
 
 void ForceKeyServerControl::setup()
@@ -31,18 +32,21 @@ void ForceKeyServerControl::serverhandleInfo()
 void ForceKeyServerControl::serverHandleRelayOn()
 {
     relayEnable();
+    ledRgb->setEnabled(true);
     getServer()->send(200, "text/plain", "OK");
 }
 
 void ForceKeyServerControl::serverHandleRelayOff()
 {
     relayDisable();
+    ledRgb->setEnabled(false);
     getServer()->send(200, "text/plain", "OK");
 }
 
 void ForceKeyServerControl::serverHandleRelayToggle()
 {
     relayToggle();
+    ledRgb->setEnabled(!forceKey->isLow());
     getServer()->send(200, "text/plain", getStatus());
 }
 

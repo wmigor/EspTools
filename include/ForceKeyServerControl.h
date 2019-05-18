@@ -4,15 +4,17 @@
 #include <ForceKey.h>
 #include <WiFiControl.h>
 #include <ESP8266WebServer.h>
+#include <LedRgbControl.h>
 
 class ForceKeyServerControl : public WiFiControl
 {
 public:
-    ForceKeyServerControl(const String & name, const String &url, ForceKey *forceKey, ESP8266WebServer *server);
+    ForceKeyServerControl(const String & name, const String &url, ForceKey *forceKey, ESP8266WebServer *server, LedRgbControl *ledRgb);
     void setup();
 
 private:
     ForceKey *forceKey;
+    LedRgbControl *ledRgb;
 
 private:
     void serverhandleInfo();

@@ -12,6 +12,7 @@ ForceKey::ForceKey(int pin, int value, int maxValue, int delta)
 void ForceKey::setup()
 {
     pinMode(pin, OUTPUT);
+    setLow();
 }
 
 void ForceKey::setRatio(float ratio)

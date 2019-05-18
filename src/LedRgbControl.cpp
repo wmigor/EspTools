@@ -1,11 +1,11 @@
 #include <LedRgbControl.h>
-#include <Color.h>
 
 LedRgbControl::LedRgbControl(const String &name, const String &url, int redPin, int greenPin, int bluePin, int value, int maxValue, int delta, ESP8266WebServer *server):
     WiFiControl(name, url, "LedRgb", server),
     redKey(redPin, value, maxValue, delta),
     greenKey(greenPin, value, maxValue, delta),
-    blueKey(bluePin, value, maxValue, delta)
+    blueKey(bluePin, value, maxValue, delta),
+    color(1, 1, 1)
 {
 }
 
@@ -26,6 +26,27 @@ void LedRgbControl::update()
     blueKey.update();
 }
 
+void LedRgbControl::setEnabled(bool enabled)
+{
+    if (enabled)
+    {
+        redKey.setRatio(color.getRed());
+        greenKey.setRatio(color.getGreen());
+        blueKey.setRatio(color.getBlue());
+    }
+    else
+    {
+        redKey.setRatio(0);
+        greenKey.setRatio(0);
+        blueKey.setRatio(0);
+    }
+}
+
+bool LedRgbControl::isEnabled() const
+{
+    return !redKey.isLow() || !greenKey.isLow() || !blueKey.isLow();
+}
+
 void LedRgbControl::serverHandleInfo()
 {
     String message = getName();
@@ -41,11 +62,11 @@ void LedRgbControl::serverHandleColor()
     String hex = getServer()->arg("color");
     if (hex == "")
     {
-        Color color(redKey.getRatio(), greenKey.getRatio(), blueKey.getRatio());
-        getServer()->send(200, "text/plain", color.getHex());
+        Color realColor(redKey.getRatio(), greenKey.getRatio(), blueKey.getRatio());
+        getServer()->send(200, "text/plain", realColor.getHex());
         return;
     }
-    Color color(hex);
+    color = Color(hex);
     redKey.setRatio(color.getRed());
     greenKey.setRatio(color.getGreen());
     blueKey.setRatio(color.getBlue());
