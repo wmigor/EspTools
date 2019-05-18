@@ -3,17 +3,17 @@
 #include <ESP8266mDNS.h>
 #include <ESP8266WebServer.h>
 #include <NetworkIdentify.h>
-#include <WifiConnector.h>
+#include <WiFiConnector.h>
 #include <SmartDelay.h>
 #include <ForceKey.h>
 #include <ForceKeyServerControl.h>
 #include <LedRgbControl.h>
 
-#define RELAY_PIN LED_BUILTIN
-#define BUTTON_PIN 5
-#define RED_PIN LED_BUILTIN
-#define GREEN_PIN LED_BUILTIN
-#define BLUE_PIN LED_BUILTIN
+#define BUTTON_PIN D1
+#define RELAY_PIN D2
+#define RED_PIN D3
+#define GREEN_PIN D4
+#define BLUE_PIN D5
 
 NetworkIdentify networkIdentify("TestEsp", "ControlsDevice", 54545);
 WiFiConnector connector("ssid", "password");
@@ -24,7 +24,7 @@ ESP8266WebServer server(80);
 int buttonState;
 
 ForceKeyServerControl relayControl("Light", "/relay", &relay, &server);
-LedRgbControl ledRgbControl("LedRgb", "/led_rgb", RED_PIN, GREEN_PIN, BLUE_PIN, 0, 1024, 1024, &server);
+LedRgbControl ledRgbControl("LedRgb", "/led_rgb", RED_PIN, GREEN_PIN, BLUE_PIN, 0, 1024, 10, &server);
 
 
 void serverHandleRoot()
@@ -82,12 +82,12 @@ void setup()
   Serial.begin(115200);
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
-  pinMode(RELAY_PIN, OUTPUT);
   pinMode(BUTTON_PIN, INPUT_PULLUP);
   buttonState = digitalRead(BUTTON_PIN);
   
   connector.connect();
   serverStart();
+  relay.setup();
   relayControl.setup();
   ledRgbControl.setup();
   networkIdentify.setup();
@@ -98,7 +98,10 @@ void loop()
   networkIdentify.handle();
   server.handleClient();
   if (relayDelay.now())
+  {
     relay.update();
+    ledRgbControl.update();
+  }
 
   if (buttonDelay.now())
   {

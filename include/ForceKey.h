@@ -5,6 +5,7 @@ class ForceKey
 {
 public:
     ForceKey(int pin, int value, int maxValue, int delta);
+    void setup();
     void setRatio(float ratio);
     float getRatio() const;
     void setHigh();

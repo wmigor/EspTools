@@ -4,15 +4,26 @@
 LedRgbControl::LedRgbControl(const String &name, const String &url, int redPin, int greenPin, int bluePin, int value, int maxValue, int delta, ESP8266WebServer *server):
     WiFiControl(name, url, "LedRgb", server),
     redKey(redPin, value, maxValue, delta),
-    greenKey(redPin, value, maxValue, delta),
-    blueKey(redPin, value, maxValue, delta)
+    greenKey(greenPin, value, maxValue, delta),
+    blueKey(bluePin, value, maxValue, delta)
 {
 }
 
 void LedRgbControl::setup()
 {
+    redKey.setup();
+    greenKey.setup();
+    blueKey.setup();
+
     getServer()->on(getUrl(), std::bind(&LedRgbControl::serverHandleInfo, this));
     getServer()->on(getUrl() + "/color", std::bind(&LedRgbControl::serverHandleColor, this));
+}
+
+void LedRgbControl::update()
+{
+    redKey.update();
+    greenKey.update();
+    blueKey.update();
 }
 
 void LedRgbControl::serverHandleInfo()

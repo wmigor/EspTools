@@ -9,6 +9,11 @@ ForceKey::ForceKey(int pin, int value, int maxValue, int delta)
     this->delta = delta;
 }
 
+void ForceKey::setup()
+{
+    pinMode(pin, OUTPUT);
+}
+
 void ForceKey::setRatio(float ratio)
 {
     if (ratio > 1.0f)

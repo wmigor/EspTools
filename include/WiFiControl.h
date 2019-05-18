@@ -1,7 +1,7 @@
 #ifndef WiFiControl_h
 #define WiFiControl_h
 
-#include <ARduino.h>
+#include <Arduino.h>
 #include <ESP8266WebServer.h>
 
 class WiFiControl
