@@ -97,8 +97,12 @@ void setup()
 
 void loop()
 {
-  networkIdentify.handle();
-  server.handleClient();
+  if (connector.isConnected())
+  {
+    networkIdentify.handle();
+    server.handleClient();
+  }
+  
   if (relayDelay.now())
   {
     relay.update();
@@ -115,4 +119,5 @@ void loop()
       ledRgbControl.setEnabled(!relay.isLow());
     }
   }
+  delay(10);
 }

@@ -1,5 +1,4 @@
 #include <WiFiConnector.h>
-#include <ESP8266WiFi.h>
 
 WiFiConnector::WiFiConnector(const String &ssid, const String &password)
 {
@@ -14,6 +13,7 @@ bool WiFiConnector::connect()
 
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
+	WiFi.setAutoReconnect(true);
 
     while (WiFi.status() != WL_CONNECTED) 
     {

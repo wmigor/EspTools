@@ -6,6 +6,8 @@
 #include <WiFiControl.h>
 #include <ForceKey.h>
 #include <Color.h>
+#include <Mode.h>
+#include <vector>
 
 class LedRgbControl : public WiFiControl
 {
@@ -20,10 +22,15 @@ private:
     ForceKey greenKey;
     ForceKey blueKey;
     Color color;
+	std::vector<Mode> modes;
+	int modeIndex;
+	Mode defaultMode;
 
-private:
     void serverHandleInfo();
     void serverHandleColor();
+	void serverHandleNextMode();
+	void setModeIndex(int index);
+	Mode createMode(const std::vector<Color> &colors, unsigned long time, bool instant, int delta);
 };
 
 #endif

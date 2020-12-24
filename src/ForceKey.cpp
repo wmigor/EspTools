@@ -7,6 +7,7 @@ ForceKey::ForceKey(int pin, int value, int maxValue, int delta)
     this->value = value;
     this->maxValue = maxValue;
     this->delta = delta;
+	instant = false;
 }
 
 void ForceKey::setup()
@@ -24,6 +25,8 @@ void ForceKey::setRatio(float ratio)
     float x = maxValue * ratio;
     target = (int) x;
     currentDelta = value < target ? delta : -delta;
+	if (instant)
+		value = target;
     updatePin();
 }
 
